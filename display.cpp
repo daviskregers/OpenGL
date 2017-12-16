@@ -3,7 +3,6 @@
 #define GLEW_STATIC
 #include <glew/include/GL/glew.h>
 #include <iostream>
-#include <QDebug>
 
 Display::Display(int width, int height, const std::string& title)
 {
