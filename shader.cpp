@@ -22,6 +22,7 @@ Shader::Shader(const std::string& fileName)
     // definē, ko shader programai lasīt
     glBindAttribLocation(m_program, 0, "position");
     glBindAttribLocation(m_program, 1, "texCoord");
+    glBindAttribLocation(m_program, 2, "normal");
 
     // linking, validācija
     glLinkProgram(m_program);
