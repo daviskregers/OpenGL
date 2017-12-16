@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     shader.cpp \
     mesh.cpp \
     stb_image.c \
-    texture.cpp
+    texture.cpp \
+    obj_loader.cpp
 
 
 HEADERS += \
@@ -632,7 +633,10 @@ HEADERS += \
     shader.h \
     mesh.h \
     stb_image.h \
-    texture.h
+    texture.h \
+    transform.h \
+    camera.h \
+    obj_loader.h
 
 LIBS += -L$$PWD/glew/lib/Release/Win32/ -lglew32s -lglu32 -lopengl32
 INCLUDEPATH += $$PWD/glew/lib/Release/Win32/
@@ -645,4 +649,5 @@ DEPENDPATH += $$PWD/sdl2/lib/x86/
 DISTFILES += \
     res/basicShader.vs \
     res/basicShader.fs \
-    res/bricks.jpg
+    res/bricks.jpg \
+    res/monkey3.obj
