@@ -3,6 +3,7 @@
 #define GLEW_STATIC
 #include <glew/include/GL/glew.h>
 #include <iostream>
+#include <QDebug>
 
 Display::Display(int width, int height, const std::string& title)
 {
@@ -49,16 +50,34 @@ void Display::Clear(float r, float g, float b, float a)
 void Display::SwapBuffers() {
     SDL_GL_SwapWindow(m_window); // Window rāda 1 logu, kamēr OpenGL zīmē otru
 
-    SDL_Event e;
+    SDL_Event event;
 
-    while(SDL_PollEvent(&e)) {
+    while( SDL_PollEvent( &event ) ){
 
-        if(e.type == SDL_QUIT) {
+        switch( event.type ){
+
+          case SDL_QUIT:
             m_isClosed = true;
+            break;
+
+          case SDL_KEYDOWN:
+
+                switch(event.key.keysym.sym) {
+                    case SDLK_ESCAPE:
+                        m_isClosed = true;
+                    break;
+                }
+
+            break;
+
+          case SDL_KEYUP:
+          break;
+
+          default:
+          break;
+
         }
-
     }
-
 }
 
 Display::~Display()
