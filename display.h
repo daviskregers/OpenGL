@@ -13,6 +13,9 @@ public:
     bool isClosed();
     virtual ~Display();
 
+    unsigned int numObjects;
+    unsigned int numObject;
+
 protected:
 private:
 

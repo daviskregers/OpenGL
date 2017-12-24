@@ -9,6 +9,7 @@
 #include <texture.h>
 #include <transform.h>
 #include <camera.h>
+#include <sdl2/include/SDL.h>
 
 #define GLEW_BUILD
 #define WIDTH 1440
@@ -43,6 +44,8 @@ int main(int argc, char *argv[])
     float counter = 0.0f;
 
     Camera camera(glm::vec3(0,0,-20), 120.0f, (float)WIDTH/(float)HEIGHT, 0.01f, 1000.0f);
+    display.numObjects = 3;
+    display.numObject = 0;
 
     while(!display.isClosed()) {
 
@@ -65,44 +68,62 @@ int main(int argc, char *argv[])
 
         transform.SetScale( scale );
 
-        /*
-         * Monkey
-         */
+        switch(display.numObject) {
 
-        shader.Bind();
-        bricks.Bind(0);
-        shader.Update(transform, camera);
-        monkey.Draw();
+            default:
 
-        /*
-         * Bezier
-         */
+                /*
+                 * Monkey
+                 */
 
-        transformBezier = transform;
+                shader.Bind();
+                bricks.Bind(0);
+                shader.Update(transform, camera);
+                monkey.Draw();
 
-        transformBezier.GetPos().x += 5;
-        transformBezier.GetPos().y += 5;
-        transformBezier.GetPos().z = 9;
+            break;
 
-        shader.Bind();
-        rust.Bind(0);
-        shader.Update(transformBezier, camera);
-        bezier.Draw();
+            case 1:
 
-        /*
-         * Subdivision
-         */
+                /*
+                 * Bezier
+                 */
 
-        transformSubdiv = transform;
+                transformBezier = transform;
 
-        transformSubdiv.GetPos().x -= 5;
-        transformSubdiv.GetPos().y -= 5;
-        transformSubdiv.GetPos().z = 9;
+//                transformBezier.GetPos().x += 5;
+//                transformBezier.GetPos().y += 5;
+//                transformBezier.GetPos().z = 9;
 
-        shader.Bind();
-        rock.Bind(0);
-        shader.Update(transformSubdiv, camera);
-        subdiv.Draw();
+                shader.Bind();
+                rust.Bind(0);
+                shader.Update(transformBezier, camera);
+                bezier.Draw();
+
+            break;
+
+            case 2:
+
+                /*
+                 * Subdivision
+                 */
+
+                transformSubdiv = transform;
+
+//                transformSubdiv.GetPos().x -= 5;
+//                transformSubdiv.GetPos().y -= 5;
+//                transformSubdiv.GetPos().z = 9;
+
+                shader.Bind();
+                rock.Bind(0);
+                shader.Update(transformSubdiv, camera);
+                subdiv.Draw();
+
+            break;
+
+
+        }
+
 
         /*
          * Swap buffers & update counter

@@ -65,6 +65,17 @@ void Display::SwapBuffers() {
                     case SDLK_ESCAPE:
                         m_isClosed = true;
                     break;
+
+                    case SDLK_TAB:
+
+                        if( numObject < numObjects - 1 ) {
+                            numObject++;
+                        }
+                        else {
+                            numObject = 0;
+                        }
+
+                    break;
                 }
 
             break;
