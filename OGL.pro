@@ -638,6 +638,9 @@ HEADERS += \
     camera.h \
     obj_loader.h
 
+
+
+
 LIBS += -L$$PWD/glew/lib/Release/Win32/ -lglew32s -lglu32 -lopengl32
 INCLUDEPATH += $$PWD/glew/lib/Release/Win32/
 DEPENDPATH += $$PWD/glew/lib/Release/Win32/
@@ -646,8 +649,11 @@ LIBS += -L$$PWD/sdl2/lib/x86/ -lSDL2main -lSDL2 -lSDL2test
 INCLUDEPATH += $$PWD/sdl2/lib/x86/
 DEPENDPATH += $$PWD/sdl2/lib/x86/
 
+
+
 DISTFILES += \
     res/basicShader.vs \
     res/basicShader.fs \
     res/bricks.jpg \
     res/monkey3.obj
+

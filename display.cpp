@@ -3,6 +3,8 @@
 #define GLEW_STATIC
 #include <glew/include/GL/glew.h>
 #include <iostream>
+#include <sdl2/include/SDL.h>
+#include <QDebug>
 
 Display::Display(int width, int height, const std::string& title)
 {
@@ -39,11 +41,10 @@ bool Display::isClosed() {
     return m_isClosed;
 }
 
-void Display::Clear(float r, float g, float b, float a)
+void Display::Clear(float r, float g, float b, float a )
 {
     glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 }
 
 void Display::SwapBuffers() {
@@ -76,6 +77,7 @@ void Display::SwapBuffers() {
                         }
 
                     break;
+
                 }
 
             break;
@@ -95,6 +97,7 @@ Display::~Display()
 
     SDL_GL_DeleteContext(m_glContext);
     SDL_DestroyWindow(m_window);
+
     SDL_Quit();
     delete m_window;
 

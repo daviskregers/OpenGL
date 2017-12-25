@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <iostream>
 #include <glew/include/GL/glew.h>
+#include <QDebug>
 
 #include <display.h>
 #include <shader.h>
@@ -25,10 +26,12 @@ int main(int argc, char *argv[])
     Texture bricks( a.applicationDirPath().toStdString() + "/res/bricks.jpg" );
     Texture rust( a.applicationDirPath().toStdString() + "/res/rust.jpg" );
     Texture rock( a.applicationDirPath().toStdString() + "/res/rock.jpg" );
+    Texture watercolor( a.applicationDirPath().toStdString() + "/res/watercolor.jpg" );
 
     Transform transform;
     Transform transformBezier;
     Transform transformSubdiv;
+    Transform transformText;
 
 //    Vertex vertices[] =  {
 //        Vertex(glm::vec3(-0.5,-0.5,0), glm::vec2(0,0)),
@@ -41,7 +44,9 @@ int main(int argc, char *argv[])
     Mesh monkey( a.applicationDirPath().toStdString() + "/res/monkey3.obj" );
     Mesh bezier( a.applicationDirPath().toStdString() + "/res/bezier.obj" );
     Mesh subdiv( a.applicationDirPath().toStdString() + "/res/subdivision.obj" );
+    Mesh text( a.applicationDirPath().toStdString() + "/res/text.obj" );
     float counter = 0.0f;
+//    float c2 = -360.0f;
 
     Camera camera(glm::vec3(0,0,-20), 120.0f, (float)WIDTH/(float)HEIGHT, 0.01f, 1000.0f);
     display.numObjects = 3;
@@ -66,7 +71,22 @@ int main(int argc, char *argv[])
             (cosCounter < 0.5) ? 0.5 : cosCounter
         );
 
+        transformText.GetPos().x = 9;
+        transformText.GetPos().y = 3;
+        transformText.GetPos().z = -1;
+
+        transformText.GetRot().x = 5;
+        transformText.GetRot().y = 13;
+        transformText.GetRot().z = 15.33;
+
+        transformText.SetScale( glm::vec3(2,2,2) );
+
         transform.SetScale( scale );
+
+        shader.Bind();
+        watercolor.Bind(0);
+        shader.Update(transformText, camera);
+        text.Draw();
 
         switch(display.numObject) {
 
@@ -131,6 +151,7 @@ int main(int argc, char *argv[])
 
         display.SwapBuffers();
         counter += 0.0001f;
+//        c2 += 0.1f;
 
     }
 
