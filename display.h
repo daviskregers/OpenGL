@@ -15,6 +15,13 @@ public:
 
     unsigned int numObjects;
     unsigned int numObject;
+    float Zoom;
+    float rotationSpeed;
+    bool transformPaused;
+
+    float offsetX, offsetY;
+
+    void initTransforms();
 
 protected:
 private:

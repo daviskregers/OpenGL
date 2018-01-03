@@ -9,6 +9,8 @@
 Display::Display(int width, int height, const std::string& title)
 {
 
+    initTransforms();
+
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8); // 8 biti krāsai
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -35,6 +37,13 @@ Display::Display(int width, int height, const std::string& title)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+}
+
+void Display::initTransforms() {
+    Zoom = 0.0f;
+    rotationSpeed = 1.0f;
+    transformPaused = true;
+    offsetX = offsetY = 0.0f;
 }
 
 bool Display::isClosed() {
@@ -78,6 +87,46 @@ void Display::SwapBuffers() {
 
                     break;
 
+                    case SDLK_UP:
+                        Zoom += 1.00f;
+                    break;
+
+
+                    case SDLK_DOWN:
+                        Zoom -= 1.00f;
+                    break;
+
+                    case SDLK_LEFT:
+                        rotationSpeed -= 0.1;
+                    break;
+
+                    case SDLK_RIGHT:
+                        rotationSpeed += 0.1;
+                    break;
+
+                    case SDLK_SPACE:
+                        transformPaused = !transformPaused;
+                    break;
+
+                    case SDLK_KP_4:
+                        offsetX -= 1.0f;
+                    break;
+
+                    case SDLK_KP_6:
+                        offsetX += 1.0f;
+                        break;
+
+                    case SDLK_KP_8:
+                        offsetY -= 1.0f;
+                        break;
+
+                    case SDLK_KP_2:
+                        offsetY += 1.0f;
+                        break;
+
+                    case SDLK_KP_5:
+                        initTransforms();
+                        break;
                 }
 
             break;

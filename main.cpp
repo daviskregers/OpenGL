@@ -48,11 +48,12 @@ int main(int argc, char *argv[])
     float counter = 0.0f;
 //    float c2 = -360.0f;
 
-    Camera camera(glm::vec3(0,0,-20), 120.0f, (float)WIDTH/(float)HEIGHT, 0.01f, 1000.0f);
     display.numObjects = 3;
     display.numObject = 0;
 
     while(!display.isClosed()) {
+
+        Camera camera(glm::vec3(display.offsetX,display.offsetY,(float)(-20.0f+display.Zoom)), 120.0f, (float)WIDTH/(float)HEIGHT, 0.01f, 1000.0f);
 
         display.Clear(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -150,7 +151,8 @@ int main(int argc, char *argv[])
          */
 
         display.SwapBuffers();
-        counter += 0.0001f;
+        if(display.transformPaused)
+            counter += 0.0001f * display.rotationSpeed;
 //        c2 += 0.1f;
 
     }
