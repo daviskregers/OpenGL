@@ -11,6 +11,11 @@ Display::Display(int width, int height, const std::string& title)
 
     initTransforms();
 
+    mouseDown = false;
+
+    this->width = width;
+    this->height = height;
+
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8); // 8 biti krāsai
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -67,6 +72,23 @@ void Display::SwapBuffers() {
 
           case SDL_QUIT:
             m_isClosed = true;
+            break;
+
+          case SDL_MOUSEMOTION:
+            if(mouseDown) {
+                    m_uiMouseX += event.motion.yrel;
+                    m_uiMouseY += event.motion.xrel;
+            }
+            break;
+
+          case SDL_MOUSEBUTTONDOWN:
+            qDebug() << "mouse down";
+            mouseDown = true;
+            break;
+
+          case SDL_MOUSEBUTTONUP:
+            qDebug() << "mouse up";
+            mouseDown = false;
             break;
 
           case SDL_KEYDOWN:
@@ -126,6 +148,8 @@ void Display::SwapBuffers() {
 
                     case SDLK_KP_5:
                         initTransforms();
+                        m_uiMouseX = 0;
+                        m_uiMouseY = 0;
                         break;
                 }
 

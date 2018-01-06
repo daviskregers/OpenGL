@@ -19,7 +19,14 @@ public:
     float rotationSpeed;
     bool transformPaused;
 
+    unsigned int width;
+    unsigned int height;
+
     float offsetX, offsetY;
+
+
+    float m_uiMouseX, m_uiMouseY;
+    bool mouseDown;
 
     void initTransforms();
 

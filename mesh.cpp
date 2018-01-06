@@ -78,3 +78,9 @@ void Mesh::Draw()
     glBindVertexArray(0);
 
 }
+
+void Mesh::DrawLines() {
+    glBindVertexArray(m_vertexArrayObject);
+        glDrawElements(GL_LINES, m_drawCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}

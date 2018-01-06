@@ -8,6 +8,8 @@ QT       += core
 
 QT       -= gui
 
+CONFIG += c++11
+
 TARGET = OGL
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -21,7 +23,8 @@ SOURCES += main.cpp \
     mesh.cpp \
     stb_image.c \
     texture.cpp \
-    obj_loader.cpp
+    obj_loader.cpp \
+    beziersurface.cpp
 
 
 HEADERS += \
@@ -636,7 +639,8 @@ HEADERS += \
     texture.h \
     transform.h \
     camera.h \
-    obj_loader.h
+    obj_loader.h \
+    beziersurface.h
 
 
 

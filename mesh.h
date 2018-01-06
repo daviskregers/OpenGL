@@ -16,6 +16,8 @@ public:
         this->norm = normal;
     }
 
+    Vertex() {}
+
     inline glm::vec3* GetPos() { return &pos; }
     inline glm::vec2* GetTexCoord() { return &texCoord; }
     inline glm::vec3* GetNormal() { return &norm; }
@@ -32,6 +34,7 @@ public:
     Mesh(Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices);
     Mesh(const std::string& fileName);
     void Draw();
+    void DrawLines();
 
     virtual ~Mesh();
 
