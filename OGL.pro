@@ -640,7 +640,9 @@ HEADERS += \
     transform.h \
     camera.h \
     obj_loader.h \
-    beziersurface.h
+    beziersurface.h \
+    subdivision.h \
+    deps.h
 
 
 

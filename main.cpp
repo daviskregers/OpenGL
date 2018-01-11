@@ -12,6 +12,7 @@
 #include <camera.h>
 #include <sdl2/include/SDL.h>
 #include <beziersurface.h>
+#include <subdivision.h>
 
 #define GLEW_BUILD
 #define WIDTH 1440
@@ -45,16 +46,9 @@ int main(int argc, char *argv[])
     Transform transformText;
     Transform transformSurf;
 
-//    Vertex vertices[] =  {
-//        Vertex(glm::vec3(-0.5,-0.5,0), glm::vec2(0,0)),
-//        Vertex(glm::vec3(0,0.5,0), glm::vec2(0.5,1.0)),
-//        Vertex(glm::vec3(0.5,-0.5,0), glm::vec2(1.0,0.0)),
-//    };
-//    unsigned int indices[] = {0, 1, 2};
-
-//    Mesh mesh(vertices, sizeof(vertices)/sizeof(vertices[0]), indices, sizeof(indices)/sizeof(indices[0]) );
     Mesh monkey( a.applicationDirPath().toStdString() + "/res/monkey3.obj" );
     Mesh bezier( a.applicationDirPath().toStdString() + "/res/bezier.obj" );
+
     Mesh subdiv( a.applicationDirPath().toStdString() + "/res/subdivision.obj" );
     Mesh text( a.applicationDirPath().toStdString() + "/res/text.obj" );
 
@@ -102,10 +96,11 @@ int main(int argc, char *argv[])
     Mesh surfaceMesh(surface.verts, surface.vertices.size(), surface.inds, surface.indices.size() );
 
     float counter = 0.0f;
+    float counter_subd = 0.0f;
 //    float c2 = -360.0f;
 
-    display.numObjects = 4;
-    display.numObject = 3;
+    display.numObjects = 5;
+    display.numObject = 0;
 
     while(!display.isClosed()) {
 
@@ -211,10 +206,23 @@ int main(int argc, char *argv[])
 
             break;
 
+        case 4:
+
+        // Subdivision Surface
+
+              shader2.Bind();
+              shader2.Update(transform, camera);
+
+              ColorVertexList vertices;
+              TriangleList triangles;
+
+              std::tie(vertices, triangles)=make_spherified_cube_seams(counter_subd);
+
+              Render(counter, vertices, triangles);
+
+            break;
 
         }
-
-
 
 
         /*
@@ -222,8 +230,10 @@ int main(int argc, char *argv[])
          */
 
         display.SwapBuffers();
-        if(display.transformPaused)
+        if(display.transformPaused) {
             counter += 0.0001f * display.rotationSpeed;
+            counter_subd = (counter_subd > 6) ? 0 : counter_subd + 0.001f * display.rotationSpeed;
+        }
 //        c2 += 0.1f;
 
     }

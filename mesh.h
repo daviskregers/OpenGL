@@ -36,6 +36,8 @@ public:
     void Draw();
     void DrawLines();
 
+    void subdivide(int subdivision_level);
+
     virtual ~Mesh();
 
 private:
@@ -50,11 +52,13 @@ private:
         NUM_BUFFERS
     };
 
-    void initMesh( const IndexedModel& model );
+    void initMesh( const IndexedModel model );
 
     GLuint m_vertexArrayObject;
     GLuint m_vertexArrayBuffers[NUM_BUFFERS];
     unsigned int m_drawCount;
+
+    IndexedModel m_model;
 
 };
 
