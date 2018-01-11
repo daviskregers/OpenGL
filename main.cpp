@@ -102,6 +102,10 @@ int main(int argc, char *argv[])
     display.numObjects = 5;
     display.numObject = 0;
 
+    display.initTransforms();
+    display.m_uiMouseX = 0;
+    display.m_uiMouseY = 0;
+
     while(!display.isClosed()) {
 
         Camera camera(glm::vec3(display.offsetX,display.offsetY,(float)(-20.0f+display.Zoom)), 120.0f, (float)WIDTH/(float)HEIGHT, 0.01f, 1000.0f);
@@ -232,7 +236,7 @@ int main(int argc, char *argv[])
         display.SwapBuffers();
         if(display.transformPaused) {
             counter += 0.0001f * display.rotationSpeed;
-            counter_subd = (counter_subd > 6) ? 0 : counter_subd + 0.001f * display.rotationSpeed;
+            counter_subd = (counter_subd > 6) ? 0 : counter_subd + 0.0001f * abs(display.rotationSpeed);
         }
 //        c2 += 0.1f;
 

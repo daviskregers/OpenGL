@@ -3,6 +3,7 @@
 
 
 // source https://schneide.wordpress.com/2016/07/15/generating-an-icosphere-in-c/
+// source https://schneide.wordpress.com/2016/08/22/generating-a-spherified-cube-in-c/
 
 struct v3
 {
