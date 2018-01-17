@@ -33,8 +33,9 @@ class Mesh
 public:
     Mesh(Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices);
     Mesh(const std::string& fileName);
-    void Draw();
+    void Draw(GLenum mode);
     void DrawLines();
+    void DrawWithoutIndices();
 
     void subdivide(int subdivision_level);
 

@@ -13,6 +13,7 @@
 #include <sdl2/include/SDL.h>
 #include <beziersurface.h>
 #include <subdivision.h>
+#include <time.h>       /* time */
 
 #define GLEW_BUILD
 #define WIDTH 1440
@@ -29,6 +30,8 @@ float random()
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+//    srand (time(NULL));
 
     Display display(WIDTH, HEIGHT, "OpenGL");
     Shader shader( a.applicationDirPath().toStdString() + "/res/basicShader");
@@ -65,42 +68,20 @@ int main(int argc, char *argv[])
                     Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,0)),
                     Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,1))
                 },
-                {
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,1)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,1))
-                },
-                {
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,1)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,1))
-                },{
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,1)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,1))
-                },
-                {
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(0,1)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,0)),
-                    Vertex(glm::vec3(random()*20,random()*20,random()*20), glm::vec2(1,1))
-                },
+
 
     };
 
-    BezierSurface surface(points, 0.5);
-    surface.GenerateMesh(0.01, 1, 0.01, 1);
+    BezierSurface surface(points, 1);
+    surface.GenerateMesh(0.01, 0.99, 0.01, 0.99);
     Mesh surfaceMesh(surface.verts, surface.vertices.size(), surface.inds, surface.indices.size() );
 
     float counter = 0.0f;
     float counter_subd = 0.0f;
 //    float c2 = -360.0f;
 
-    display.numObjects = 5;
-    display.numObject = 0;
+    display.numObjects = 3;
+    display.numObject = 03;
 
     display.initTransforms();
     display.m_uiMouseX = 0;
@@ -108,7 +89,7 @@ int main(int argc, char *argv[])
 
     while(!display.isClosed()) {
 
-        Camera camera(glm::vec3(display.offsetX,display.offsetY,(float)(-20.0f+display.Zoom)), 120.0f, (float)WIDTH/(float)HEIGHT, 0.01f, 1000.0f);
+        Camera camera(glm::vec3(display.offsetX,display.offsetY,(float)(-20.0f+display.Zoom)), 120.0f, (float)WIDTH/(float)HEIGHT, 0.001f, 10000.0f);
         camera.rotate(display.m_uiMouseX, display.m_uiMouseY);
 
         display.Clear(0.0f, 0.0f, 0.0f, 1.0f);
@@ -143,7 +124,7 @@ int main(int argc, char *argv[])
         shader.Bind();
         watercolor.Bind(0);
         shader.Update(transformText, camera);
-        text.Draw();
+        text.Draw(GL_TRIANGLES);
 
         switch(display.numObject) {
 
@@ -156,39 +137,39 @@ int main(int argc, char *argv[])
                 shader.Bind();
                 bricks.Bind(0);
                 shader.Update(transform, camera);
-                monkey.Draw();
+                monkey.Draw(GL_TRIANGLES);
 
             break;
+
+//            case 1:
+
+//                /*
+//                 * Bezier
+//                 */
+
+//                transformBezier = transform;
+//                shader.Bind();
+//                rust.Bind(0);
+//                shader.Update(transformBezier, camera);
+//                bezier.Draw(GL_TRIANGLES);
+
+//            break;
+
+//            case 2:
+
+//                /*
+//                 * Subdivision
+//                 */
+
+//                transformSubdiv = transform;
+//                shader.Bind();
+//                rock.Bind(0);
+//                shader.Update(transformSubdiv, camera);
+//                subdiv.Draw(GL_TRIANGLES);
+
+//            break;
 
             case 1:
-
-                /*
-                 * Bezier
-                 */
-
-                transformBezier = transform;
-                shader.Bind();
-                rust.Bind(0);
-                shader.Update(transformBezier, camera);
-                bezier.Draw();
-
-            break;
-
-            case 2:
-
-                /*
-                 * Subdivision
-                 */
-
-                transformSubdiv = transform;
-                shader.Bind();
-                rock.Bind(0);
-                shader.Update(transformSubdiv, camera);
-                subdiv.Draw();
-
-            break;
-
-            case 3:
 
             // Bezier Surface
 
@@ -204,13 +185,14 @@ int main(int argc, char *argv[])
                 transformSurf.GetRot().z = 15.33;
 
                 shader2.Bind();
-                red.Bind(0);
+                bricks.Bind(0);
                 shader2.Update(transformSurf, camera);
-                surfaceMesh.DrawLines();
+
+                surfaceMesh.Draw(GL_TRIANGLES);
 
             break;
 
-        case 4:
+        case 2:
 
         // Subdivision Surface
 

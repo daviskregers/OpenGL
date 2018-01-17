@@ -73,70 +73,21 @@ Mesh::~Mesh()
     glDeleteVertexArrays(1, &m_vertexArrayObject);
 }
 
-void Mesh::subdivide(int subdivision_level) {
+void Mesh::DrawWithoutIndices()
+{
 
-    if(subdivision_level > 0) {
-
-        for(int i = 0; i < subdivision_level; i++) {
-
-            const int size = m_model.positions.size();
-
-            for(int i = 2; i < size; i+=3) {
-
-                glm::vec3 p1 = m_model.positions[i-2];
-                glm::vec3 p2 = m_model.positions[i-1];
-                glm::vec3 p3 = m_model.positions[i];
-
-                glm::vec3 c1((float)((float)p2.x-(float)p1.x)/2, (float)((float)p2.y-(float)p1.y)/2, (float)((float)p2.z-(float)p1.z)/2);
-                glm::vec3 c2((float)((float)p3.x-(float)p2.x)/2, ((float)p3.y-(float)p2.y)/2, (float)((float)p3.z-(float)p2.z)/2);
-                glm::vec3 c3((float)((float)p1.x-(float)p3.x)/2, (float)((float)p1.y-(float)p3.y)/2, (float)((float)p1.z-(float)p3.z)/2);
-
-                qDebug() << c1.x << c1.y << c1.z;
-                qDebug() << c2.x << c2.y << c2.z;
-                qDebug() << c3.x << c3.y << c3.z;
-
-                m_model.positions.insert(m_model.positions.begin() + i, c3);
-                m_model.positions.insert(m_model.positions.begin() + i, c2);
-                m_model.positions.insert(m_model.positions.begin() + i, c1);
-
-                m_model.texCoords.insert(m_model.texCoords.begin() + i, m_model.texCoords[i]);
-                m_model.texCoords.insert(m_model.texCoords.begin() + i, m_model.texCoords[i]);
-                m_model.texCoords.insert(m_model.texCoords.begin() + i, m_model.texCoords[i]);
-
-                m_model.normals.insert(m_model.normals.begin() + i, m_model.normals[i]);
-                m_model.normals.insert(m_model.normals.begin() + i, m_model.normals[i]);
-                m_model.normals.insert(m_model.normals.begin() + i, m_model.normals[i]);
-
-                m_model.indices.insert(m_model.indices.begin() + i, m_drawCount+2);
-                m_model.indices.insert(m_model.indices.begin() + i, m_drawCount+1);
-                m_model.indices.insert(m_model.indices.begin() + i, m_drawCount);
-
-                m_drawCount += 3;
-                i += 3;
-
-            }
-
-        }
-
-        initMesh(m_model);
-
-    }
+    glBindVertexArray(m_vertexArrayObject);
+        glDrawArrays(GL_POINTS, 0, m_model.positions.size() );
+    glBindVertexArray(0);
 
 }
 
-void Mesh::Draw()
+void Mesh::Draw(GLenum mode)
 {
-
 
     glBindVertexArray(m_vertexArrayObject);
 //        glDrawArrays(GL_TRIANGLES, 0, m_drawCount);
         glDrawElements(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-}
-
-void Mesh::DrawLines() {
-    glBindVertexArray(m_vertexArrayObject);
-        glDrawElements(GL_LINES, m_drawCount, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
 }
