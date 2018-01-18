@@ -55,7 +55,7 @@ void BezierSurface::GenerateMesh(float u1, float u2, float v1, float v2)
             glm::vec3 p1(x, y, z);
             glm::vec3 n1;
 
-            if( idx > 1 ) {
+            if( idx++ > 1 ) {
                 glm::vec3 c = *(vertices[idx-2].GetPos());
                 glm::vec3 b = *(vertices[idx-1].GetPos());
 

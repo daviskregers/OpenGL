@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
 
     Display display(WIDTH, HEIGHT, "OpenGL");
     Shader shader( a.applicationDirPath().toStdString() + "/res/basicShader");
-    Shader shader2( a.applicationDirPath().toStdString() + "/res/basicShader2");
+    Shader shader_lights( a.applicationDirPath().toStdString() + "/res/basicShader");
+    Shader shader_nolights( a.applicationDirPath().toStdString() + "/res/basicShader2");
 
     Texture bricks( a.applicationDirPath().toStdString() + "/res/bricks.jpg" );
     Texture rust( a.applicationDirPath().toStdString() + "/res/rust.jpg" );
@@ -73,7 +74,7 @@ int main(int argc, char *argv[])
     };
 
     BezierSurface surface(points, 1);
-    surface.GenerateMesh(0.01, 0.99, 0.01, 0.99);
+    surface.GenerateMesh(0, 1, 0, 1);
     Mesh surfaceMesh(surface.verts, surface.vertices.size(), surface.inds, surface.indices.size() );
 
     float counter = 0.0f;
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
 //    float c2 = -360.0f;
 
     display.numObjects = 3;
-    display.numObject = 03;
+    display.numObject = 0;
 
     display.initTransforms();
     display.m_uiMouseX = 0;
@@ -120,6 +121,8 @@ int main(int argc, char *argv[])
         transformText.SetScale( glm::vec3(2,2,2) );
 
         transform.SetScale( scale );
+
+        shader = (display.lights) ? shader_lights : shader_nolights;
 
         shader.Bind();
         watercolor.Bind(0);
@@ -184,9 +187,9 @@ int main(int argc, char *argv[])
                 transformSurf.GetRot().y = 13;
                 transformSurf.GetRot().z = 15.33;
 
-                shader2.Bind();
-                bricks.Bind(0);
-                shader2.Update(transformSurf, camera);
+                shader.Bind();
+                rust.Bind(0);
+                shader.Update(transformSurf, camera);
 
                 surfaceMesh.Draw(GL_TRIANGLES);
 
@@ -196,8 +199,8 @@ int main(int argc, char *argv[])
 
         // Subdivision Surface
 
-              shader2.Bind();
-              shader2.Update(transform, camera);
+              shader.Bind();
+              shader.Update(transform, camera);
 
               ColorVertexList vertices;
               TriangleList triangles;

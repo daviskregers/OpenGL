@@ -49,6 +49,7 @@ void Display::initTransforms() {
     rotationSpeed = 1.0f;
     transformPaused = true;
     offsetX = offsetY = 0.0f;
+    lights = true;
 }
 
 bool Display::isClosed() {
@@ -150,6 +151,11 @@ void Display::SwapBuffers() {
                         initTransforms();
                         m_uiMouseX = 0;
                         m_uiMouseY = 0;
+                        break;
+
+                    case SDLK_F1:
+                        lights = !lights;
+                        qDebug() << "LIGHTS: " << lights;
                         break;
                 }
 

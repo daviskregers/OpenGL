@@ -27,6 +27,7 @@ public:
 
     float m_uiMouseX, m_uiMouseY;
     bool mouseDown;
+    bool lights;
 
     void initTransforms();
 
