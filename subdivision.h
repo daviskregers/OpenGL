@@ -10,6 +10,8 @@
 #include <array>
 #include <deps.h>
 
+#include <mesh.h>
+
 
 template <typename VertexList>
 Index vertex_for_edge(Lookup& lookup,
@@ -69,50 +71,49 @@ TriangleList subdivide_2(ColorVertexList& vertices,
 }
 
 using IndexedMesh=std::pair<VertexList, TriangleList>;
-using ColoredIndexMesh=std::pair<ColorVertexList, TriangleList>;
+using ColoredIndexMesh=std::pair<std::vector<Vertex>, std::vector<unsigned int>>;
 
 ColoredIndexMesh make_spherified_cube_seams(int subdivisions)
 {
   ColorVertexList vertices=box_with_seams::vertices;
   TriangleList triangles=box_with_seams::triangles;
 
+  std::vector<Vertex> verts;
+  std::vector<unsigned int> indices;
+
   for (int i=0; i<subdivisions; ++i)
   {
     triangles=subdivide_2(vertices, triangles);
   }
 
-  return{vertices, triangles};
-}
+  float u = 1/vertices.size(), v = 1/vertices.size();
 
-void RenderMesh(ColorVertexList const& vertices, TriangleList const& triangles)
-{
+  for(auto i = vertices.begin(); i < vertices.end(); ++i) {
 
-    glDisable(GL_CULL_FACE);
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+      glm::vec3 n;
 
-    glBegin(GL_TRIANGLES);
+      verts.push_back(Vertex( glm::vec3(i->position.data[0], i->position.data[1], i->position.data[2]), glm::vec2(u,v), n ));
 
-    for (auto&& triangle:triangles)
-    {
-      for (int c=0; c<3; ++c)
-      {
-        auto const& vertex=vertices[triangle.vertex[c]];
-        glColor3fv(vertex.color);
-        glVertex3fv(vertex.position);
-      }
-    }
+  }
 
-    glEnd();
+  for( auto i = triangles.begin(); i < triangles.end(); ++i) {
 
-    glEnable(GL_CULL_FACE);
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+      glm::vec3 a = glm::vec3(vertices[i->vertex[0]].position.data[0], vertices[i->vertex[0]].position.data[1], vertices[i->vertex[0]].position.data[2]);
+      glm::vec3 b = glm::vec3(vertices[i->vertex[1]].position.data[0], vertices[i->vertex[1]].position.data[1], vertices[i->vertex[1]].position.data[2]);
+      glm::vec3 c = glm::vec3(vertices[i->vertex[2]].position.data[0], vertices[i->vertex[2]].position.data[1], vertices[i->vertex[2]].position.data[2]);
+      glm::vec3 n = glm::normalize(glm::cross(c - a, b - a));
 
-}
+      verts[i->vertex[0]].norm = n;
+      verts[i->vertex[1]].norm = n;
+      verts[i->vertex[2]].norm = n;
 
-template <class VertexList>
-void Render(float angle, VertexList const& vertices, TriangleList const& triangles)
-{
-  RenderMesh(vertices, triangles);
+      indices.push_back(i->vertex[0]);
+      indices.push_back(i->vertex[1]);
+      indices.push_back(i->vertex[2]);
+
+  }
+
+  return{verts, indices};
 }
 
 #endif // SUBDIVISION_H

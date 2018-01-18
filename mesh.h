@@ -22,10 +22,12 @@ public:
     inline glm::vec2* GetTexCoord() { return &texCoord; }
     inline glm::vec3* GetNormal() { return &norm; }
 
+    glm::vec3 norm;
+
 private:
     glm::vec3 pos;
     glm::vec2 texCoord;
-    glm::vec3 norm;
+
 };
 
 class Mesh

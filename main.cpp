@@ -199,15 +199,30 @@ int main(int argc, char *argv[])
 
         // Subdivision Surface
 
-              shader.Bind();
-              shader.Update(transform, camera);
+            glDisable(GL_CULL_FACE);
 
-              ColorVertexList vertices;
-              TriangleList triangles;
 
-              std::tie(vertices, triangles)=make_spherified_cube_seams(counter_subd);
+                transformSurf = transformText;
+                transformSurf.SetScale(glm::vec3(0.5, 0.5, 0.5));
 
-              Render(counter, vertices, triangles);
+                transformSurf.GetPos().x = 0;
+                transformSurf.GetPos().y = 0;
+                transformSurf.GetPos().z = 0;
+
+                shader.Bind();
+                rock.Bind(0);
+                shader.Update(transformSurf, camera);
+
+              std::vector<Vertex> vertices;
+              std::vector<unsigned int> indices;
+
+              std::tie(vertices, indices)=make_spherified_cube_seams(counter_subd);
+
+              Mesh m(&vertices[0], vertices.size(), &indices[0], indices.size() );
+              m.Draw(GL_TRIANGLES);
+
+              glEnable(GL_CULL_FACE);
+
 
             break;
 
@@ -222,6 +237,7 @@ int main(int argc, char *argv[])
         if(display.transformPaused) {
             counter += 0.0001f * display.rotationSpeed;
             counter_subd = (counter_subd > 6) ? 0 : counter_subd + 0.0001f * abs(display.rotationSpeed);
+            counter_subd = (abs(counter_subd) > 1000) ? 0 : counter_subd;
         }
 //        c2 += 0.1f;
 
