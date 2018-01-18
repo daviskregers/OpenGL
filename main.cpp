@@ -176,6 +176,8 @@ int main(int argc, char *argv[])
 
             // Bezier Surface
 
+                glDisable(GL_CULL_FACE);
+
                 transformSurf = transformText;
                 transformSurf.SetScale(glm::vec3(0.33, 0.33, 0.33));
 
@@ -193,6 +195,8 @@ int main(int argc, char *argv[])
 
                 surfaceMesh.Draw(GL_TRIANGLES);
 
+                glEnable(GL_CULL_FACE);
+
             break;
 
         case 2:
@@ -200,10 +204,12 @@ int main(int argc, char *argv[])
         // Subdivision Surface
 
             glDisable(GL_CULL_FACE);
+//            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
 
 
                 transformSurf = transformText;
-                transformSurf.SetScale(glm::vec3(0.5, 0.5, 0.5));
+//                transformSurf.SetScale(glm::vec3(0.5, 0.5, 0.5));
 
                 transformSurf.GetPos().x = 0;
                 transformSurf.GetPos().y = 0;
@@ -222,6 +228,8 @@ int main(int argc, char *argv[])
               m.Draw(GL_TRIANGLES);
 
               glEnable(GL_CULL_FACE);
+//              glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
 
 
             break;

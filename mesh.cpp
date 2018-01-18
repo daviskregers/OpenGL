@@ -73,14 +73,6 @@ Mesh::~Mesh()
     glDeleteVertexArrays(1, &m_vertexArrayObject);
 }
 
-void Mesh::DrawWithoutIndices()
-{
-
-    glBindVertexArray(m_vertexArrayObject);
-        glDrawArrays(GL_POINTS, 0, m_model.positions.size() );
-    glBindVertexArray(0);
-
-}
 
 void Mesh::Draw(GLenum mode)
 {

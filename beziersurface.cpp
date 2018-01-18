@@ -1,5 +1,10 @@
 #include "beziersurface.h"
 #include <QDebug>
+
+#define GLM_ENABLE_EXPERIMENTAL
+
+#include<glm/glm/gtx/normal.hpp>
+
 BezierSurface::BezierSurface(std::vector<std::vector<Vertex>> points, float triangleSize)
 {
 
@@ -59,7 +64,8 @@ void BezierSurface::GenerateMesh(float u1, float u2, float v1, float v2)
                 glm::vec3 c = *(vertices[idx-2].GetPos());
                 glm::vec3 b = *(vertices[idx-1].GetPos());
 
-                n1 = glm::cross(c - p1, b - p1);
+                n1 = glm::normalize(glm::cross(c - p1, b - p1));
+//                  n1 = glm::triangleNormal(p1,b,c);
 
             }
 

@@ -12,10 +12,12 @@
 
 #include <mesh.h>
 
+#include<glm/glm/gtx/normal.hpp>
+
 
 template <typename VertexList>
-Index vertex_for_edge(Lookup& lookup,
-  VertexList& vertices, Index first, Index second)
+unsigned int vertex_for_edge(Lookup& lookup,
+  VertexList& vertices, unsigned int first, unsigned int second)
 {
   Lookup::key_type key(first, second);
   if (key.first>key.second)
@@ -36,9 +38,12 @@ int longest_edge(ColorVertexList& vertices, Triangle const& triangle)
   int result=0;
   for (int i=0; i<3; ++i)
   {
-    auto a=vertices[triangle.vertex[i]].position;
-    auto b=vertices[triangle.vertex[(i+1)%3]].position;
-    float contest =(a-b).squared();
+    auto a=vertices[triangle.vertex[i]];
+    auto b=vertices[triangle.vertex[(i+1)%3]];
+
+    glm::vec3 c = a - b;
+
+    float contest = c.x*c.x+c.y*c.y+c.z*c.z;
     if (contest>best)
     {
       best=contest;
@@ -57,7 +62,7 @@ TriangleList subdivide_2(ColorVertexList& vertices,
   for (auto&& each:triangles)
   {
     auto edge=longest_edge(vertices, each);
-    Index mid=vertex_for_edge(lookup, vertices,
+    unsigned int mid=vertex_for_edge(lookup, vertices,
       each.vertex[edge], each.vertex[(edge+1)%3]);
 
     result.push_back({each.vertex[edge],
@@ -78,6 +83,7 @@ ColoredIndexMesh make_spherified_cube_seams(int subdivisions)
   ColorVertexList vertices=box_with_seams::vertices;
   TriangleList triangles=box_with_seams::triangles;
 
+
   std::vector<Vertex> verts;
   std::vector<unsigned int> indices;
 
@@ -89,19 +95,19 @@ ColoredIndexMesh make_spherified_cube_seams(int subdivisions)
   float u = 1/vertices.size(), v = 1/vertices.size();
 
   for(auto i = vertices.begin(); i < vertices.end(); ++i) {
-
-      glm::vec3 n;
-
-      verts.push_back(Vertex( glm::vec3(i->position.data[0], i->position.data[1], i->position.data[2]), glm::vec2(u,v), n ));
-
+      verts.push_back(Vertex( glm::vec3(i->x, i->y, i->z), glm::vec2(u,v) ));
+      u += 1/vertices.size();
+      v += 1/vertices.size();
   }
 
   for( auto i = triangles.begin(); i < triangles.end(); ++i) {
 
-      glm::vec3 a = glm::vec3(vertices[i->vertex[0]].position.data[0], vertices[i->vertex[0]].position.data[1], vertices[i->vertex[0]].position.data[2]);
-      glm::vec3 b = glm::vec3(vertices[i->vertex[1]].position.data[0], vertices[i->vertex[1]].position.data[1], vertices[i->vertex[1]].position.data[2]);
-      glm::vec3 c = glm::vec3(vertices[i->vertex[2]].position.data[0], vertices[i->vertex[2]].position.data[1], vertices[i->vertex[2]].position.data[2]);
+      glm::vec3 a = glm::vec3(vertices[i->vertex[0]].x, vertices[i->vertex[0]].y, vertices[i->vertex[0]].z);
+      glm::vec3 b = glm::vec3(vertices[i->vertex[1]].x, vertices[i->vertex[1]].y, vertices[i->vertex[1]].z);
+      glm::vec3 c = glm::vec3(vertices[i->vertex[2]].x, vertices[i->vertex[2]].y, vertices[i->vertex[2]].z);
+//      glm::vec3 n = glm::cross(c - a, b - a);
       glm::vec3 n = glm::normalize(glm::cross(c - a, b - a));
+//      glm::vec3 n = glm::triangleNormal(a,b,c);
 
       verts[i->vertex[0]].norm = n;
       verts[i->vertex[1]].norm = n;
