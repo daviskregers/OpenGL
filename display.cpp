@@ -26,7 +26,7 @@ Display::Display(int width, int height, const std::string& title)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-    //SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
     m_glContext = SDL_GL_CreateContext(m_window); // nodrošina GPU izmantošanu renderēšanas procesam
 
     GLenum status = glewInit(); // atrod visas funkcijas, kuras sistēma atbalsta
@@ -50,6 +50,8 @@ void Display::initTransforms() {
     transformPaused = true;
     offsetX = offsetY = 0.0f;
     lights = true;
+    wireframe = false;
+    debug = false;
 }
 
 bool Display::isClosed() {
@@ -112,11 +114,13 @@ void Display::SwapBuffers() {
 
                     case SDLK_UP:
                         Zoom += 1.00f;
+                        qDebug() << "Zoom: " << (-21.0f+Zoom);
                     break;
 
 
                     case SDLK_DOWN:
                         Zoom -= 1.00f;
+                        qDebug() << "Zoom: " << (-21.0f+Zoom);
                     break;
 
                     case SDLK_LEFT:
@@ -156,6 +160,16 @@ void Display::SwapBuffers() {
                     case SDLK_F1:
                         lights = !lights;
                         qDebug() << "LIGHTS: " << lights;
+                        break;
+
+                    case SDLK_F2:
+                        wireframe = !wireframe;
+                        qDebug() << "WIREFRAME: " << wireframe;
+                        break;
+
+                    case SDLK_F3:
+                        debug = !debug;
+                        qDebug() << "DEBUG: " << debug;
                         break;
                 }
 

@@ -92,30 +92,37 @@ ColoredIndexMesh make_spherified_cube_seams(int subdivisions)
     triangles=subdivide_2(vertices, triangles);
   }
 
-  float u = 1/vertices.size(), v = 1/vertices.size();
+  float u = 0;
+  float v = 0;
+  float texDelta = 1.0f/(vertices.size());
 
   for(auto i = vertices.begin(); i < vertices.end(); ++i) {
       verts.push_back(Vertex( glm::vec3(i->x, i->y, i->z), glm::vec2(u,v) ));
-      u += 1/vertices.size();
-      v += 1/vertices.size();
+      u = u + texDelta;
+      v = v + texDelta;
   }
 
   for( auto i = triangles.begin(); i < triangles.end(); ++i) {
 
-      glm::vec3 a = glm::vec3(vertices[i->vertex[0]].x, vertices[i->vertex[0]].y, vertices[i->vertex[0]].z);
-      glm::vec3 b = glm::vec3(vertices[i->vertex[1]].x, vertices[i->vertex[1]].y, vertices[i->vertex[1]].z);
-      glm::vec3 c = glm::vec3(vertices[i->vertex[2]].x, vertices[i->vertex[2]].y, vertices[i->vertex[2]].z);
+      std::vector<unsigned int> inds;
+      inds.push_back(i->vertex[0]);
+      inds.push_back(i->vertex[1]);
+      inds.push_back(i->vertex[2]);
+
+      glm::vec3 a = glm::vec3(vertices[inds[0]].x, vertices[inds[0]].y, vertices[inds[0]].z);
+      glm::vec3 b = glm::vec3(vertices[inds[1]].x, vertices[inds[1]].y, vertices[inds[1]].z);
+      glm::vec3 c = glm::vec3(vertices[inds[2]].x, vertices[inds[2]].y, vertices[inds[2]].z);
 //      glm::vec3 n = glm::cross(c - a, b - a);
       glm::vec3 n = glm::normalize(glm::cross(c - a, b - a));
-//      glm::vec3 n = glm::triangleNormal(a,b,c);
+//      glm::vec3 n = glm::triangleNormal(b,a,c);
 
-      verts[i->vertex[0]].norm = n;
-      verts[i->vertex[1]].norm = n;
-      verts[i->vertex[2]].norm = n;
+      verts[inds[0]].norm = n;
+      verts[inds[1]].norm = n;
+      verts[inds[2]].norm = n;
 
-      indices.push_back(i->vertex[0]);
-      indices.push_back(i->vertex[1]);
-      indices.push_back(i->vertex[2]);
+      indices.push_back(inds[0]);
+      indices.push_back(inds[1]);
+      indices.push_back(inds[2]);
 
   }
 

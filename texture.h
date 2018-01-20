@@ -11,7 +11,7 @@ public:
     Texture(const std::string& fileName);
     void Bind(unsigned int unit); // līdz 32 tekstūrām vienlaicīgi
     virtual ~Texture();
-private:
+//private:
     GLuint m_texture;
 };
 

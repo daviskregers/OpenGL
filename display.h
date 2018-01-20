@@ -28,6 +28,8 @@ public:
     float m_uiMouseX, m_uiMouseY;
     bool mouseDown;
     bool lights;
+    bool wireframe;
+    bool debug;
 
     void initTransforms();
 

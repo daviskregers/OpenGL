@@ -74,12 +74,74 @@ Mesh::~Mesh()
 }
 
 
-void Mesh::Draw(GLenum mode)
+void Mesh::Draw(GLenum mode, bool debug)
 {
+
+    if(debug) {
+        DrawDebug();
+    }
 
     glBindVertexArray(m_vertexArrayObject);
 //        glDrawArrays(GL_TRIANGLES, 0, m_drawCount);
         glDrawElements(mode, m_drawCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+}
+
+void Mesh::DrawDebug()
+{
+
+    // Points
+
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glBegin(GL_POINTS);
+
+        for( auto i = m_model.positions.begin(); i < m_model.positions.end(); ++i) {
+
+            glPointSize(10.0f);
+            glVertex3f(i->x * 1.2, i->y * 1.2, i->z * 1.2);
+
+        }
+
+    glEnd();
+
+    glBegin(GL_LINES);
+
+        for( auto i = m_model.indices.begin() + 2; i < m_model.indices.end(); i += 3 ) {
+
+            std::vector<unsigned int> inds;
+            inds.push_back( *(i-2) );
+            inds.push_back( *(i-1) );
+            inds.push_back( *(i-0) );
+
+            glm::vec3 a = glm::vec3( m_model.positions[ inds[0] ].x * 1.1, m_model.positions[ inds[0] ].y * 1.1, m_model.positions[ inds[0] ].z * 1.1);
+            glm::vec3 b = glm::vec3( m_model.positions[ inds[1] ].x * 1.1, m_model.positions[ inds[1] ].y * 1.1, m_model.positions[ inds[1] ].z * 1.1);
+            glm::vec3 c = glm::vec3( m_model.positions[ inds[2] ].x * 1.1, m_model.positions[ inds[2] ].y * 1.1, m_model.positions[ inds[2] ].z * 1.1);
+
+            // Edges
+
+            glVertex3f( a.x, a.y, a.z );
+            glVertex3f( b.x, b.y, b.z );
+            glVertex3f( b.x, b.y, b.z );
+            glVertex3f( c.x, c.y, c.z );
+            glVertex3f( c.x, c.y, c.z );
+            glVertex3f( a.x, a.y, a.z );
+
+            // Normals
+
+            glm::vec3 n = m_model.normals[i[0]];
+            glm::vec3 vid(
+              (a.x + b.x + c.x)/3,
+              (a.y + b.y + c.y)/3,
+              (a.z + b.z + c.z)/3
+            );
+
+            glVertex3f(vid.x, vid.y, vid.z);
+            glVertex3f(vid.x + n.x *1.3 ,vid.y+  n.y*1.3,vid.z+  n.z*1.3);
+
+        }
+
+    glEnd();
 
 }

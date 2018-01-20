@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     Texture watercolor( a.applicationDirPath().toStdString() + "/res/watercolor.jpg" );
     Texture red( a.applicationDirPath().toStdString() + "/res/red.jpg" );
 
+    Transform none;
     Transform transform;
     Transform transformBezier;
     Transform transformSubdiv;
@@ -78,10 +79,17 @@ int main(int argc, char *argv[])
     Mesh surfaceMesh(surface.verts, surface.vertices.size(), surface.inds, surface.indices.size() );
 
     float counter = 0.0f;
-    float counter_subd = 0.0f;
+    float counter_subd = 9.0f;
 //    float c2 = -360.0f;
 
-    display.numObjects = 3;
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+    std::tie(vertices, indices)=make_spherified_cube_seams(counter_subd);
+    unsigned int last_subd = ceil(counter_subd);
+
+    Mesh m(&vertices[0], vertices.size(), &indices[0], indices.size() );
+
+    display.numObjects = 5;
     display.numObject = 0;
 
     display.initTransforms();
@@ -90,10 +98,13 @@ int main(int argc, char *argv[])
 
     while(!display.isClosed()) {
 
-        Camera camera(glm::vec3(display.offsetX,display.offsetY,(float)(-20.0f+display.Zoom)), 120.0f, (float)WIDTH/(float)HEIGHT, 0.001f, 10000.0f);
+        // Camera
+        Camera camera(glm::vec3(display.offsetX,display.offsetY,(float)(-25.0f+display.Zoom)), 120.0f, (float)WIDTH/(float)HEIGHT, 0.001f, 500.0f);
         camera.rotate(display.m_uiMouseX, display.m_uiMouseY);
 
         display.Clear(0.0f, 0.0f, 0.0f, 1.0f);
+
+        // Transformations
 
         float sinCounter = sinf(counter);
         float cosCounter = cosf(counter);
@@ -110,24 +121,46 @@ int main(int argc, char *argv[])
             (cosCounter < 0.5) ? 0.5 : cosCounter
         );
 
-        transformText.GetPos().x = 9;
-        transformText.GetPos().y = 3;
+        transformText.GetPos().x = 10;
+        transformText.GetPos().y = 4;
         transformText.GetPos().z = -1;
 
         transformText.GetRot().x = 5;
         transformText.GetRot().y = 13;
         transformText.GetRot().z = 15.33;
 
-        transformText.SetScale( glm::vec3(2,2,2) );
+        transformText.SetScale( glm::vec3(0.5f,0.5f,0.5f) );
 
         transform.SetScale( scale );
 
         shader = (display.lights) ? shader_lights : shader_nolights;
 
+        transformSurf = transformText;
+        transformSurf.SetScale(glm::vec3(0.33, 0.33, 0.33));
+
+        transformSurf.GetPos().x = 0;
+        transformSurf.GetPos().y = 0;
+        transformSurf.GetPos().z = 0;
+
+        transformSurf.GetRot().x = 5;
+        transformSurf.GetRot().y = 13;
+        transformSurf.GetRot().z = 15.33;
+
+        // Render helper text
+
         shader.Bind();
         watercolor.Bind(0);
         shader.Update(transformText, camera);
-        text.Draw(GL_TRIANGLES);
+        text.Draw(GL_TRIANGLES, display.debug);
+
+        if(display.wireframe) {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        }
+        else {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        }
+
+        // Object render
 
         switch(display.numObject) {
 
@@ -140,97 +173,79 @@ int main(int argc, char *argv[])
                 shader.Bind();
                 bricks.Bind(0);
                 shader.Update(transform, camera);
-                monkey.Draw(GL_TRIANGLES);
+                monkey.Draw(GL_TRIANGLES, display.debug);
 
             break;
 
-//            case 1:
-
-//                /*
-//                 * Bezier
-//                 */
-
-//                transformBezier = transform;
-//                shader.Bind();
-//                rust.Bind(0);
-//                shader.Update(transformBezier, camera);
-//                bezier.Draw(GL_TRIANGLES);
-
-//            break;
-
-//            case 2:
-
-//                /*
-//                 * Subdivision
-//                 */
-
-//                transformSubdiv = transform;
-//                shader.Bind();
-//                rock.Bind(0);
-//                shader.Update(transformSubdiv, camera);
-//                subdiv.Draw(GL_TRIANGLES);
-
-//            break;
-
             case 1:
+
+                /*
+                 * Bezier
+                 */
+
+                transformBezier = transform;
+                shader.Bind();
+                rust.Bind(0);
+                shader.Update(transformBezier, camera);
+                bezier.Draw(GL_TRIANGLES, display.debug);
+
+            break;
+
+            case 2:
+
+                /*
+                 * Subdivision
+                 */
+
+                transformSubdiv = transform;
+                shader.Bind();
+                rock.Bind(0);
+                shader.Update(transformSubdiv, camera);
+                subdiv.Draw(GL_TRIANGLES, display.debug);
+
+            break;
+
+            case 3:
 
             // Bezier Surface
 
                 glDisable(GL_CULL_FACE);
 
-                transformSurf = transformText;
-                transformSurf.SetScale(glm::vec3(0.33, 0.33, 0.33));
-
-                transformSurf.GetPos().x = 0;
-                transformSurf.GetPos().y = 0;
-                transformSurf.GetPos().z = 0;
-
-                transformSurf.GetRot().x = 5;
-                transformSurf.GetRot().y = 13;
-                transformSurf.GetRot().z = 15.33;
-
                 shader.Bind();
                 rust.Bind(0);
                 shader.Update(transformSurf, camera);
 
-                surfaceMesh.Draw(GL_TRIANGLES);
+                surfaceMesh.Draw(GL_TRIANGLES, display.debug);
+
+//                shader_nolights.Bind();
+//                red.Bind(0);
+
+//                surfaceMesh.DrawDebug();
 
                 glEnable(GL_CULL_FACE);
 
             break;
 
-        case 2:
+        case 4:
 
         // Subdivision Surface
 
             glDisable(GL_CULL_FACE);
-//            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
-
-
-                transformSurf = transformText;
-//                transformSurf.SetScale(glm::vec3(0.5, 0.5, 0.5));
-
-                transformSurf.GetPos().x = 0;
-                transformSurf.GetPos().y = 0;
-                transformSurf.GetPos().z = 0;
 
                 shader.Bind();
                 rock.Bind(0);
-                shader.Update(transformSurf, camera);
+                shader.Update(none, camera);
 
-              std::vector<Vertex> vertices;
-              std::vector<unsigned int> indices;
+//                if( ceil(counter_subd) > last_subd ) {
+//                    qDebug() << "Update subdivision with" << ceil(counter_subd) << last_subd;
+//                    std::tie(vertices, indices)=make_spherified_cube_seams(counter_subd);
+//                    m = Mesh(&vertices[0], vertices.size(), &indices[0], indices.size() );
+//                }
+//                last_subd = ceil(counter_subd);
 
-              std::tie(vertices, indices)=make_spherified_cube_seams(counter_subd);
-
-              Mesh m(&vertices[0], vertices.size(), &indices[0], indices.size() );
-              m.Draw(GL_TRIANGLES);
+                m.Draw(GL_TRIANGLES, display.debug);
 
               glEnable(GL_CULL_FACE);
-//              glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-
-
 
             break;
 
